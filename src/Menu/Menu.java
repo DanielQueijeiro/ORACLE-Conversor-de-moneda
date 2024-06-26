@@ -1,13 +1,18 @@
 package Menu;
 
 import Busqueda.Busqueda;
+import Busqueda.Historial;
+import Busqueda.Conversion;
 
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
+    private static final Historial historial = new Historial();
     public static void main(String[] args) throws IOException, InterruptedException {
         Scanner lectura = new Scanner(System.in);
+
+
 
         while(true) {
             System.out.println("****************************************"
@@ -19,7 +24,8 @@ public class Menu {
                     + "\n5.- COP -> USD"
                     + "\n6.- USD -> COP"
                     + "\n7.- Otra conversión"
-                    + "\n8.- Salir"
+                    + "\n8.- Mostrar historial de conversiones"
+                    + "\n9.- Salir"
                     + "\n****************************************\n");
 
             int opcion = Integer.parseInt(lectura.nextLine());
@@ -60,7 +66,15 @@ public class Menu {
                     monedaDestino = monedaDestino.toUpperCase();
                     buscarConversion(monedaOriginal, monedaDestino, lectura);
                     break;
+
                 case 8:
+                    System.out.println("Historial de conversiones:");
+                    for(Conversion conversion : historial.getHistorial()){
+                        System.out.println(conversion.mostrarConversion());
+                    }
+                    break;
+
+                case 9:
                     System.out.println("Gracias por usar el conversor de divisas.");
                     System.exit(0);
                     break;
@@ -79,9 +93,10 @@ public class Menu {
         double resultado = busqueda.buscarDivisa(monedaOriginal, monedaDestino, cantidad);
         if (resultado == -1) {
             System.out.println("Ocurrió un error al realizar la conversión.");
-        } else {
-            System.out.printf("El valor de " + cantidad + " " + monedaOriginal + " en " + monedaDestino
-                    + " es: %.4f\n", resultado);
         }
+        Conversion conversion = new Conversion(monedaOriginal, monedaDestino, cantidad, resultado);
+        historial.agregarConversion(conversion);
+        System.out.printf("El valor de " + cantidad + " " + monedaOriginal + " en " + monedaDestino
+               + " es: %.4f\n", resultado);
     }
 }
